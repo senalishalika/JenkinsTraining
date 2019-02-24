@@ -1,32 +1,27 @@
-pipeline {
-    agent any
-
-    stages {
-        stage ('Compile Stage') {
-
-            steps {
-                withMaven(maven : 'maven3') {
-                    echo 'mvn clean compile'
-                }
-            }
-        }
-
-        stage ('Testing Stage') {
-
-            steps {
-                withMaven(maven : 'maven3') {
-                    echo 'mvn test'
-                }
-            }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven3') {
-                    echo 'mvn deploy'
-                }
-            }
-        }
+node{
+    stage('SCM Checkout'){
+        
+        git 'https://github.com/senalishalika/JenkinsTraining'
     }
+    stage('Initialize'){
+        def dockerHome = tool 'myDocker'
+        def mavenHome  = tool 'myMaven'
+        env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+        
+    }
+     stage('Compile'){
+         def mavenHome  = tool 'myMaven'
+         echo "${mavenHome}/bin/mvn clean compile"
+    }
+    
+    stage('Testing Stage'){
+         def mavenHome  = tool 'myMaven'
+         echo "${mavenHome}/bin/mvn test"
+    }
+    
+    stage('Deployment Stage'){
+         def mavenHome  = tool 'myMaven'
+         echo "${mavenHome}/bin/mvn deploy"
+    }
+   
 }
